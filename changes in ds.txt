@@ -1,0 +1,21 @@
+1. allergens  - tomato, wheat, rice remove
+		replace=== eggplant -> brinjal
+
+2.  Spinach Egg Muffins Recipe- occuring twice 1547 3294
+    Tomato Noodle Soup Recipe - occuring twice
+    
+    Delete all -->
+    Beetroot chutney
+    Raw Mango raita
+    Doli kee roti
+    tandoori roti
+    Mixed Millet and lentils adai
+
+3. Replace Eggeterian with Non-Vegetarian - Diet column
+
+4. remove unnecessary columns - unused
+
+5. used- >
+    StringCleanedLowerIngredientsFiltered
+    ProcessedCleanedLoweredIngredientsFiltered
+
