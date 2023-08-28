@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables for AWS credentials (optional)
-ENV AWS_ACCESS_KEY_ID='AKIA5O6PLTGF7OZSG4XG'
-ENV AWS_SECRET_ACCESS_KEY='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'
+ENV AWS_ACCESS_KEY_ID='AKIARPUDNP2C2YZ6W2UZ'
+ENV AWS_SECRET_ACCESS_KEY='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'
 
 # Set the working directory to /app
 WORKDIR /app
