@@ -18,13 +18,15 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.decomposition import PCA
 #from tensorflow.keras.layers import Embedding
 
+# Load the CSV dataset
+dataset_path = "ProcessedCleaned.csv"
 
 plt.style.use("ggplot")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 @st.cache_data
 def load_data():
-    data = pd.read_csv("ProcessedCleaned.csv")       
+    data = pd.read_csv(dataset_path)       
     return data
 
 df = load_data()
@@ -245,12 +247,13 @@ elif rad == "Insights":
         if select == dishchart[0]:
             # Sample dessert ingredient data (replace with your own data)
             dessert_df = df[df['Course'] == 'Main Course'].reset_index()
-            ingredients = []
+            unique_ingredients = set()
+
             for i in range(0, len(dessert_df)):
-                text = dessert_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+                ingridients = dessert_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
+                unique_ingredients.update(ingridient.strip() for ingridient in ingridients )
+                
+                text = ', '.join(unique_ingredients)
 
             # Generate the word cloud using the 'plasma' colormap
             wordcloud_plasma = WordCloud(
@@ -274,12 +277,12 @@ elif rad == "Insights":
 
         elif select == dishchart[1]:
             side_dish_df = df[df['Course'] == 'Side Dish'].reset_index()
-            ingredients = []
-            for i in range(0, len(side_dish_df)):
+            unique_ingredients = set()
+            for i in range(len(side_dish_df)):
                 text = side_dish_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+                unique_ingredients.update(ingredients.strip() for ingredients in text)
+
+                text = ' '.join(unique_ingredients)
 
             # Generate the word cloud using the 'plasma' colormap
             wordcloud_plasma = WordCloud(
@@ -303,12 +306,11 @@ elif rad == "Insights":
 
         else:
             dessert_df = df[df['Course'] == 'Dessert'].reset_index()
-            ingredients = []
+            unique_ingredients = set()
             for i in range(0, len(dessert_df)):
                 text = dessert_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+                unique_ingredients.update(ingredients.strip() for ingredients in text)
+                text = ' '.join(unique_ingredients)
 
             # Generate the word cloud using the 'plasma' colormap
             wordcloud_plasma = WordCloud(
@@ -336,7 +338,9 @@ elif rad == "Insights":
       select = st.selectbox("Select the meal of the day",vegnonveg)
 
       if select == vegnonveg[0]:
+
             vegetarian_df = df[df['Diet'] == 'Vegetarian']
+            vegetarian_df = vegetarian_df[~vegetarian_df['Region'].isin(['International', 'Indian'])]
 
             # Create a DataFrame that groups data by 'Region' and calculates counts for vegetarian dishes
             vegetarian_counts = vegetarian_df['Region'].value_counts()
@@ -360,6 +364,7 @@ elif rad == "Insights":
 
       else:
             non_vegetarian_df = df[df['Diet'] == 'Non Vegeterian']
+            non_vegetarian_df = non_vegetarian_df[~non_vegetarian_df['Region'].isin(['International', 'Indian'])]
 
             # Create a DataFrame that groups data by 'Region' and calculates counts for non-vegetarian dishes
             non_vegetarian_counts = non_vegetarian_df['Region'].value_counts()
@@ -436,7 +441,7 @@ elif rad == "Insights":
 
 
             # Filter data for Lunch
-            filtered_df = df[df['Course'].isin(['Lunch']) & (df['TotalTimeInMins'] > 0)]
+            filtered_df = df[df['Course'].isin(['Lunch']) & (df['CookTimeInMins'] > 0)]
 
             # Find the recipe with the least total time
             min_time_recipe = filtered_df[filtered_df['TotalTimeInMins'] == filtered_df['TotalTimeInMins']]
@@ -531,12 +536,12 @@ elif rad == "Insights":
         if select == diet[0]:
             diabetic_Friendly_df  = df[df['Diet'] == 'Diabetic Friendly'].reset_index()
 
-            ingredients = []
-            for i in range(0,len(diabetic_Friendly_df)):
+            unique_ingredients= set()
+            for i in range(len(diabetic_Friendly_df)):
                 text = diabetic_Friendly_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+                
+                unique_ingredients.update([ingredients.strip() for ingredients in text])
+                text = ' '.join(unique_ingredients)
 
             wordcloud = WordCloud(width = 400, height = 400, colormap = 'plasma'
                                 ,background_color ='black', 
@@ -550,12 +555,12 @@ elif rad == "Insights":
         elif select == diet[1]:
             vegeterian_df  = df[df['Diet'] == 'High Protein Vegetarian'].reset_index()
 
-            ingredients = []
+            unique_ingredients = set()
             for i in range(0,len(vegeterian_df)):
                 text = vegeterian_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+                
+                unique_ingredients.update(ingredients.strip() for ingredients in text)
+                text = ' '.join(unique_ingredients)
 
             wordcloud = WordCloud(width = 400, height = 400, colormap = 'prism'
                                 ,background_color ='black', 
@@ -570,12 +575,12 @@ elif rad == "Insights":
         elif select == diet[2]:
             non_vegeterian_df  = df[df['Diet'] == 'High Protein Non Vegetarian'].reset_index()
 
-            ingredients = []
+            unique_ingredients = set()
             for i in range(0,len(non_vegeterian_df)):
                 text = non_vegeterian_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+
+                unique_ingredients.update(ingredients.strip() for ingredients in text)
+                text = ' '.join(unique_ingredients)
 
             wordcloud = WordCloud(width = 400, height = 400, colormap = 'coolwarm'
                                 ,background_color ='black', 
@@ -591,12 +596,12 @@ elif rad == "Insights":
 
             vegan_df  = df[df['Diet'] == 'Vegan'].reset_index()
 
-            ingredients = []
+            unique_ingredients=set()
             for i in range(0,len(vegan_df)):
                 text = vegan_df["ProcessedCleanedLoweredIngredientsFiltered"][i].split(',')
-                text = ','.join(text)
-                ingredients.append(text)
-                text = ' '.join(ingredients)
+                
+                unique_ingredients.update(ingredients.strip() for ingredients in text)
+                text = ' '.join(unique_ingredients)
 
             wordcloud = WordCloud(width = 400, height = 400, colormap = 'gnuplot2'
                                 ,background_color ='black', 
@@ -631,7 +636,7 @@ elif rad == "Insights":
             colors = ['blue', 'green', 'orange', 'red', 'purple'] 
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_sweet_distribution, x=region_wide_sweet_distribution.index, y='Region',
+            fig = px.bar(region_wide_sweet_distribution, x=region_wide_sweet_distribution.index, y='count',
                         color=region_wide_sweet_distribution.index, color_discrete_sequence=colors,
                         #title='Distribution of Region Wise Sweet Recipes '
                         )
@@ -656,7 +661,7 @@ elif rad == "Insights":
             colors = ['red', 'orange', 'yellow', 'purple', 'blue']  # Add more colors as needed
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_spicy_distribution, x=region_wide_spicy_distribution.index, y='Region',
+            fig = px.bar(region_wide_spicy_distribution, x=region_wide_spicy_distribution.index, y='count',
                         color=region_wide_spicy_distribution.index, color_discrete_sequence=colors,
                         #title='Distribution of "Spicy" Recipes by Region '
                         )
@@ -682,7 +687,7 @@ elif rad == "Insights":
             colors = ['orange', 'yellow', 'green', 'red', 'purple']  # Add more colors as needed
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_tangy_distribution, x=region_wide_tangy_distribution.index, y='Region',
+            fig = px.bar(region_wide_tangy_distribution, x=region_wide_tangy_distribution.index, y='count',
                         color=region_wide_tangy_distribution.index, color_discrete_sequence=colors,
                         #title='Distribution of "Tangy" Recipes by Region '
                         )
@@ -709,7 +714,7 @@ elif rad == "Insights":
             colors = ['red', 'orange', 'yellow', 'purple', 'blue']
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_bitter_distribution, x=region_wide_bitter_distribution.index, y='Region',
+            fig = px.bar(region_wide_bitter_distribution, x=region_wide_bitter_distribution.index, y='count',
                         color=region_wide_bitter_distribution.index, color_discrete_sequence=colors,
                         #title='Distribution of "Bitter" Recipes by Region '
                          )
@@ -737,7 +742,7 @@ elif rad == "Insights":
             colors = ['green', 'brown', 'olive', 'darkgreen', 'darkolivegreen']  # Add more colors as needed
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_savory_distribution, x=region_wide_savory_distribution.index, y='Region',
+            fig = px.bar(region_wide_savory_distribution, x=region_wide_savory_distribution.index, y='count',
                         color=region_wide_savory_distribution.index, color_discrete_sequence=colors,
                         #title='Distribution of "Savory" Recipes '
                         )
@@ -836,19 +841,23 @@ elif rad == "Insights":
     elif select == charts[10]:
         st.write("""## Recipes With Most Allergens""")
         num = st.slider("Number of Recipes to show",min_value=2,max_value=15,value=10)
-        new_df = df[['EnglishRecepie', 'common_alergens']]
-        new_df = pd.DataFrame(new_df)
-        new_df['NumAllergens'] = new_df['common_alergens'].apply(lambda x: len(x.split(', ')))        
-        df_sorted = new_df.sort_values(by='NumAllergens', ascending=False)
         sns.set(style='dark')
 
-        x = df_sorted.head(num)
         plt.figure(figsize=(12, 8))
+       
+        #plt.title('Maximum Number of Allergens in Recipes')
+        #plt.show()
+
+        new_df = df[['EnglishRecepie', 'common_alergens']]
+        new_df = pd.DataFrame(new_df)
+        new_df['NumAllergens'] = new_df['common_alergens'].apply(lambda x: len(x.split(', ')))
+        df_sorted = new_df.sort_values(by='NumAllergens', ascending=False)
+
+        x = df_sorted.head(num)
+        plt.figure(figsize=(12,8))
         sns.barplot(x='NumAllergens', y='EnglishRecepie', data=x, palette='viridis')
         plt.xlabel('Number of Allergens',color="black")
         plt.ylabel('Recipe',color="black")
-        #plt.title('Maximum Number of Allergens in Recipes')
-        #plt.show()
         st.pyplot()
 
 #Recommendation system
