@@ -776,7 +776,7 @@ elif rad == "Insights":
             colors = ['blue', 'green', 'orange', 'red', 'purple'] 
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_sweet_distribution, x=region_wide_sweet_distribution.index, y='Region',
+            fig = px.bar(region_wide_sweet_distribution, x=region_wide_sweet_distribution.index, y='count',
                         color=region_wide_sweet_distribution.index, color_discrete_sequence=colors,
                         )
             fig.update_xaxes(title='Region')
@@ -810,7 +810,7 @@ elif rad == "Insights":
             colors = ['red', 'orange', 'yellow', 'purple', 'blue']  # Add more colors as needed
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_spicy_distribution, x=region_wide_spicy_distribution.index, y='Region',
+            fig = px.bar(region_wide_spicy_distribution, x=region_wide_spicy_distribution.index, y='count',
                         color=region_wide_spicy_distribution.index, color_discrete_sequence=colors,
                         )
             fig.update_xaxes(title='Region')
@@ -844,7 +844,7 @@ elif rad == "Insights":
             colors = ['orange', 'yellow', 'green', 'red', 'purple']  # Add more colors as needed
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_tangy_distribution, x=region_wide_tangy_distribution.index, y='Region',
+            fig = px.bar(region_wide_tangy_distribution, x=region_wide_tangy_distribution.index, y='count',
                         color=region_wide_tangy_distribution.index, color_discrete_sequence=colors,
                         )
             fig.update_xaxes(title='Region')
@@ -877,7 +877,7 @@ elif rad == "Insights":
             colors = ['red', 'orange', 'yellow', 'purple', 'blue']
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_bitter_distribution, x=region_wide_bitter_distribution.index, y='Region',
+            fig = px.bar(region_wide_bitter_distribution, x=region_wide_bitter_distribution.index, y='count',
                         color=region_wide_bitter_distribution.index, color_discrete_sequence=colors,
                          )
             fig.update_xaxes(title='Region')
@@ -910,7 +910,7 @@ elif rad == "Insights":
             colors = ['green', 'brown', 'olive', 'darkgreen', 'darkolivegreen']  # Add more colors as needed
 
             # Create an interactive bar chart using Plotly with different colors
-            fig = px.bar(region_wide_savory_distribution, x=region_wide_savory_distribution.index, y='Region',
+            fig = px.bar(region_wide_savory_distribution, x=region_wide_savory_distribution.index, y='count',
                         color=region_wide_savory_distribution.index, color_discrete_sequence=colors,
                         )
             fig.update_xaxes(title='Region')
