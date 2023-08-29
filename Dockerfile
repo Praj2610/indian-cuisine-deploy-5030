@@ -11,9 +11,13 @@ RUN apt-get update && apt-get install -y \
     libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for AWS credentials (optional)
-# ENV AWS_ACCESS_KEY_ID='AKIARPUDNP2C2YZ6W2UZ'
-# ENV AWS_SECRET_ACCESS_KEY='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'
+# Use a build argument to pass AWS credentials
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+
+# Set AWS credentials as environment variables
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
 # Set the working directory to /app
 WORKDIR /app
