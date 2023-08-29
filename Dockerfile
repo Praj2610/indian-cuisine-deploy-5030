@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install awscli
 
 # Download the CSV dataset from S3
-RUN aws s3 cp s3://data-repo-cleaned-us-east-1/ProcessedCleaned.csv /app/ProcessedCleaned.csv
+RUN aws s3 cp s3://data-repo-cleaned-us-east-1-5030/ProcessedCleaned.csv /app/ProcessedCleaned.csv
 
 # Make port 8501 available to the world outside this container
 EXPOSE 8501
