@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables for AWS credentials (optional)
-ENV AWS_ACCESS_KEY_ID='AKIARPUDNP2C2YZ6W2UZ'
-ENV AWS_SECRET_ACCESS_KEY='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'
+# ENV AWS_ACCESS_KEY_ID='AKIARPUDNP2C2YZ6W2UZ'
+# ENV AWS_SECRET_ACCESS_KEY='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'
 
 # Set the working directory to /app
 WORKDIR /app
@@ -32,4 +32,4 @@ RUN aws s3 cp s3://data-repo-cleaned-us-east-1/ProcessedCleaned.csv /app/Process
 EXPOSE 8501
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "maincopy.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+CMD ["streamlit", "run", "main.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
