@@ -7,14 +7,27 @@ Original file is located at
     https://colab.research.google.com/drive/1y6JFrl0SptpFwacH_GzsMlwSiUrTa57o
 """
 
-import os
-os.chdir('/content/drive/MyDrive/Kagge_colab/dbda-proj')
-
+import sys
+import boto3
 import pandas as pd
 import numpy as np
+import os
 import re
 
+# Initialize S3 client
+s3 = boto3.client('s3')
+
+# Load the dataset from S3
+bucket_name = 'recepie-raw-us-east-1'
+input_key = 'IndianFoodDatasetCSV.csv'
+df = pd.read_csv(f's3://{bucket_name}/{input_key}')
 df = pd.read_excel('IndianFoodDatasetXLS.xlsx')
+
+
+# Define the target S3 bucket and key
+target_bucket = 'recepie-cleaned-us-east-1'
+target_key = 'Cleaned.csv'
+output_filename = 'Cleaned.csv'
 
 df.head()
 
@@ -42,11 +55,15 @@ def clean_and_convert(elements):
 # Apply the clean_and_convert function to each list in the 'CleanedIngredients' column
 df['ProcessedIngredients'] = only_ingredients.apply(clean_and_convert)
 
+df['ProcessedIngredients'][1]
+
 split_ingredients = [word for ingredient in df['ProcessedIngredients'][0] for word in ingredient.split()]
 
 df_split =df['ProcessedIngredients'].apply(lambda row: [word for ingredient in row for word in ingredient.split()])
 
 df['ProcessedCleanedIngredients']=df_split
+
+df['ProcessedCleanedIngredients'][1]
 
 df['ProcessedCleanedIngredients']=df_split
 def is_empty_list(lst):
@@ -81,7 +98,12 @@ stop_words=['thinly','sliced','teaspoons','teaspoon','as','inch','per','required
             'sunflower', 'green', 'leaf', 'stick', 'puree', 'sauce', 'juice', 'roasted', 'bengal', 'black',
             'fresh', 'ripe', 'room', 'temperature', 'extract', 'purpose', 'whipping', 'dark', 'greek', 'at',
             'garnish', 'demerara', 'unsalted', 'hung', 'powdered', 'dessicated', 'icing', 'washed',
-            'strands','heavy', 'crushed', 'breasts', 'kashmiri', 'dried', 'mashed', 'kala']
+            'strands','heavy', 'crushed', 'breasts', 'kashmiri', 'dried', 'mashed', 'kala','boil'
+            , 'ounce', 'gram', 'milliliter', 'liter', 'dash', 'dish', 'cuisine', 'meal','adjust','grilled','served','strips','hinghing','shallow','spice',
+            'your','torn','gm','gram','lengthwise','button','snake','tadka','cluster','preferably','greens','canned',
+            'ada','edible','like','handful','more','adjustable','silvered','halved','choice','melted','glazed','colour',
+            'preference','rind','only','blanched','halves','rotis','add','little','head','pearl','tightnen','overnight','coarsely',
+            'top','bunch','ice','eyed','little','bunch','extracted','handful','it','horse']
 
 def stop_removal(lst):
   no_stop=[]
@@ -92,7 +114,7 @@ def stop_removal(lst):
 
 final_ingredients=clear_df['ProcessedCleanedLoweredIngredients'].apply(lambda x: stop_removal(x))
 
-final_ingredients[890]
+final_ingredients[156]
 
 clear_df['ProcessedCleanedLoweredIngredientsFiltered']=final_ingredients
 
@@ -139,11 +161,11 @@ alergens=['Milk'
 list1=[elem.lower() for elem in alergens]
 
 def alergens_detection(x,list1):
-  heh=[]
+  row=[]
   for word in x:
     if word in list1:
-      heh.append(word)
-  return heh
+      row.append(word)
+  return row
 
 clear_df['common_alergens']=clear_df['ProcessedCleanedLoweredIngredients'].apply(lambda x: alergens_detection(x,list1))
 
@@ -171,7 +193,8 @@ def tag_ingredients(row):
     if isinstance(row, str):  # Check if the row is a string
         ingredients = row.split(',')
         cleaned_ingredients = [ingredient.strip() for ingredient in ingredients]
-        return ', '.join(cleaned_ingredients)  # Join the cleaned ingredients into a single string
+        return ', '.join(cleaned_ingredients)
+        # Join the cleaned ingredients into a single string
     else:
         return ''
 
@@ -201,7 +224,11 @@ stop_words=['thinly','sliced','teaspoons','teaspoon','as','inch','per','required
             'grated','friendly','cholestrol','omit','virgin','extra',
             'thick','make','stock','night','over','broad','slits','optional',
             'shredded','purple','leaves','leaves','mix','red', 'minced', 'peeled', 'with','cook', 'bake', 'roast', 'fry', 'sauté', 'simmer', 'boil'
-            , 'ounce', 'gram', 'milliliter', 'liter', 'dash', 'dish', 'cuisine', 'meal'
+            , 'ounce', 'gram', 'milliliter', 'liter', 'dash', 'dish', 'cuisine', 'meal','adjust','grilled','served','strips','hinghing','shallow','spice',
+            'your','torn','gm','gram','lengthwise','button','snake','tadka','cluster','preferably','greens','canned',
+            'ada','edible','like','handful','more','adjustable','silvered','halved','choice','melted','glazed','colour',
+            'preference','rind','only','blanched','halves','rotis','add','little','head','pearl','tightnen','overnight','coarsely',
+            'top','bunch','ice','eyed','little','bunch','extracted','handful'
 ]
 
 # Function to remove custom stopwords from a text
@@ -211,8 +238,9 @@ def remove_custom_stopwords(text):
     filtered_words = [word for word in words if word.lower() not in stop_words]
     return ' '.join(filtered_words)
 
-# Assuming your DataFrame is named clear_df and the column is 'StringCleanedLowerIngredients'
 clear_df['StringCleanedLowerIngredientsFiltered'] = clear_df['StringCleanedLowerIngredients'].apply(remove_custom_stopwords)
+
+clear_df.iloc[8]['StringCleanedLowerIngredientsFiltered']
 
 clear_df.columns
 
@@ -226,5 +254,27 @@ cols=['Srno','EnglishRecepie','FlavourProfile','PrepTimeInMins','CookTimeInMins'
 
 cleaned_df=clear_df[cols]
 
-cleaned_df
+cleaned_df['FlavourProfile'].unique()
+
+cleaned_df.loc[cleaned_df['FlavourProfile'] == 'Spicy ', 'FlavourProfile'] = 'Spicy'
+
+cleaned_df.loc[cleaned_df['FlavourProfile'] == 'Savory ', 'FlavourProfile'] = 'Savory'
+
+cleaned_df.loc[cleaned_df['FlavourProfile'] == ' Tangy', 'FlavourProfile'] = 'Tangy'
+
+cleaned_df.loc[cleaned_df['FlavourProfile'] == 'Sweet ', 'FlavourProfile'] = 'Sweet'
+
+cleaned_df.loc[cleaned_df['FlavourProfile'] == 'Tangy ', 'FlavourProfile'] = 'Tangy'
+
+cleaned_df['FlavourProfile'].unique()
+
+cleaned_df.to_csv(output_filename, index=False)
+
+# Upload the output file to the target S3 bucket
+s3.upload_file(output_filename, target_bucket, target_key)
+
+# Remove the local output file
+os.remove(output_filename)
+
+#cleaned_df.to_csv('/content/drive/MyDrive/Kagge_colab/dbda-proj/ETL/ProcessedCleaned.csv',index=False)
 
