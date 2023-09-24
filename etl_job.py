@@ -26,8 +26,8 @@ df = pd.read_excel('IndianFoodDatasetXLS.xlsx')
 
 # Define the target S3 bucket and key
 target_bucket = 'recepie-cleaned-us-east-1'
-target_key = 'Cleaned.csv'
-output_filename = 'Cleaned.csv'
+target_key = 'ProcessedCleaned.csv'
+output_filename = 'ProcessedCleaned.csv'
 
 df.head()
 
